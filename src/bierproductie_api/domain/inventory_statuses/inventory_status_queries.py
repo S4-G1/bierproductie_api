@@ -39,6 +39,12 @@ class Queries():
 
     async def update(self, old_inventory_status: Model,
                      new_inventory_status: UpdateSchema) -> Model:
-        updated_inventory_status = await old_inventory_status.update(
-            **new_inventory_status.__dict__).apply()
+        to_update = {}
+        if new_inventory_status.current_value:
+            to_update["current_value"] = new_inventory_status.current_value
+        if new_inventory_status.name:
+            to_update["name"] = new_inventory_status.name
+        if new_inventory_status.max_value:
+            to_update["max_value"] = new_inventory_status.max_value
+        updated_inventory_status = await old_inventory_status.update(**to_update).apply()
         return updated_inventory_status._instance  # pylint: disable=protected-access
